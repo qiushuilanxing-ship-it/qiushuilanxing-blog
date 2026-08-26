@@ -1,0 +1,83 @@
+name: Deploy blog
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: production-blog
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build VuePress
+        run: npm run docs:build
+
+      - name: Verify build output
+        run: test -f docs/.vuepress/dist/index.html
+
+      - name: Prepare SSH
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SERVER_SSH_KEY" > ~/.ssh/blog_deploy_key
+          chmod 600 ~/.ssh/blog_deploy_key
+          ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
+
+      - name: Package build
+        run: tar -C docs/.vuepress/dist -czf /tmp/blog-dist.tar.gz .
+
+      - name: Upload build package
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          scp -i ~/.ssh/blog_deploy_key /tmp/blog-dist.tar.gz "$SERVER_USER@$SERVER_HOST:/tmp/blog-dist.tar.gz"
+
+      - name: Publish on server
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -i ~/.ssh/blog_deploy_key "$SERVER_USER@$SERVER_HOST" 'set -eu
+            release_dir=$(mktemp -d /tmp/blog-release.XXXXXX)
+            trap "rm -rf \"$release_dir\" /tmp/blog-dist.tar.gz" EXIT
+            tar -xzf /tmp/blog-dist.tar.gz -C "$release_dir"
+            test -f "$release_dir/index.html"
+            find "$release_dir" -type d -exec chmod 755 {} +
+            find "$release_dir" -type f -exec chmod 644 {} +
+            find /var/www/blog -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+            cp -a "$release_dir"/. /var/www/blog/
+          '
+
+      - name: Verify deployed site
+        env:
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_USER: ${{ secrets.SERVER_USER }}
+        run: |
+          ssh -i ~/.ssh/blog_deploy_key "$SERVER_USER@$SERVER_HOST" 'test -r /var/www/blog/index.html'
