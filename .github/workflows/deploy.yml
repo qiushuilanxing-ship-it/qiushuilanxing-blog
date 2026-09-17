@@ -27,7 +27,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20
           cache: npm
 
       - name: Install dependencies
@@ -45,8 +45,9 @@ jobs:
           SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SERVER_SSH_KEY" > ~/.ssh/blog_deploy_key
+          printf '%s\n' "$SERVER_SSH_KEY" | tr -d '\r' > ~/.ssh/blog_deploy_key
           chmod 600 ~/.ssh/blog_deploy_key
+          ssh-keygen -y -f ~/.ssh/blog_deploy_key > /dev/null
           ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
       - name: Package build
