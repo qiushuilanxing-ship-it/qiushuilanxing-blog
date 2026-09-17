@@ -42,10 +42,10 @@ jobs:
       - name: Prepare SSH
         env:
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
-          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
+          SERVER_SSH_KEY_B64: ${{ secrets.SERVER_SSH_KEY_B64 }}
         run: |
           install -m 700 -d ~/.ssh
-          printf '%s\n' "$SERVER_SSH_KEY" | tr -d '\r' > ~/.ssh/blog_deploy_key
+          printf '%s' "$SERVER_SSH_KEY_B64" | base64 --decode > ~/.ssh/blog_deploy_key
           chmod 600 ~/.ssh/blog_deploy_key
           ssh-keygen -y -f ~/.ssh/blog_deploy_key > /dev/null
           ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
