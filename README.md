@@ -69,7 +69,13 @@ npm run docs:build
 
 - `SERVER_HOST`：服务器地址
 - `SERVER_USER`：部署用户
-- `SERVER_SSH_KEY`：部署用户对应的 SSH 私钥
+- `SERVER_SSH_KEY_B64`：部署用户 SSH 私钥的 Base64 编码内容
+
+Windows PowerShell 可使用以下命令生成 `SERVER_SSH_KEY_B64`：
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("$env:USERPROFILE\.ssh\qiushuilanxing_blog_deploy"))
+```
 
 服务器上的 Nginx 直接读取 `/var/www/blog`。生产部署不再使用 GitHub Pages，也不在服务器上构建源码。
 
