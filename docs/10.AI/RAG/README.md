@@ -16,4 +16,6 @@ comment: false
 
 用于沉淀知识入库、检索、重排、生成和效果评估相关实践。
 
-文章正在整理中。
+## 文章
+
+- [RAG 不等于可回答：知识可信度与 Answerability Gate 设计](/ai/rag/answerability-gate/)

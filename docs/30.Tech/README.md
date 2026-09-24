@@ -8,10 +8,14 @@ comment: false
 
 # 技术笔记
 
-记录 AI 应用开发所需的工程技术、工具使用、部署运维和问题排查经验。
+记录 AI 应用开发所需的工程技术、工具使用、部署运维和问题排查经验。这里不追求百科式罗列，而是沉淀能复用到项目里的开发习惯、检查清单与问题定位方法。
 
-- [Python](/tech/python/)
-- [Git](/tech/git/)
-- [Linux](/tech/linux/)
-- [Docker](/tech/docker/)
-- [Frontend](/tech/frontend/)
+| 方向 | 关注内容 |
+| --- | --- |
+| [Python](/tech/python/) | 项目结构、依赖、配置与服务端开发 |
+| [Git](/tech/git/) | 安全协作、提交习惯、分支与变更排查 |
+| [Linux](/tech/linux/) | 部署、进程、日志、网络与资源排障 |
+| [Docker](/tech/docker/) | 镜像、容器、编排与本地到服务器的一致性 |
+| [Frontend](/tech/frontend/) | AI 交互、状态呈现、接口联调与可用性 |
+
+每篇笔记优先回答三个问题：问题发生在哪里、如何用最小步骤验证、怎样避免下次再次发生。
