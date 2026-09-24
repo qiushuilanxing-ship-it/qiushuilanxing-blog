@@ -2,10 +2,11 @@
   <div class="ai-home">
     <section class="intro-section">
       <p class="eyebrow">ABOUT ME</p>
-      <h2>你好，我是 qiushuilanxing</h2>
+      <h2>你好，我是 秋水揽星</h2>
       <p class="lead">
-        我是一名 AI 工程师，专注 AI 应用开发，持续关注 Agent、RAG、智能客服与企业 AI 应用。
+        我是一名 AI 开发工程师，专注 AI 应用开发，持续关注 Agent、RAG、智能客服与企业 AI 应用。
         这里用于记录工程实践、项目过程和可复用的技术笔记。
+        天行健，君子以自强不息。
       </p>
       <div class="contact-row">
         <a href="https://github.com/qiushuilanxing-ship-it" target="_blank" rel="noopener noreferrer">GitHub</a>
